@@ -21,3 +21,13 @@ Base = declarative_base(cls=PreBase)
 engine = create_async_engine(settings.database_url)
 
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession)
+
+
+# Асинхроный генератор сессий.
+async def get_async_session():
+    # Через асинхронный котекстный менеджер и sessionmaker
+    # открыывается сессия.
+    async with AsyncSessionLocal() as async_session:
+        yield async_session
+        # Когда HTTP-запрос отработает - выолнение кода вернется сюдя,
+        # и при выходн из контекстоного менеджера сессия будет закрта.
