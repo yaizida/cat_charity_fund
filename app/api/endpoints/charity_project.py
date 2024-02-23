@@ -58,6 +58,7 @@ async def get_all_charity_projects(
 @router.patch(
     '/{project_id}',
     response_model=CharityProjectDB,
+    esponse_model_exclude_none=True,
     dependencies=[Depends(current_superuser)]
 )
 async def update_charity_project(
