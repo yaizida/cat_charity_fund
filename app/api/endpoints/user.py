@@ -17,11 +17,14 @@ router.include_router(
     prefix='/auth',
     tags=['auth'],
 )
+# Подключаем изменённый роутер по старому адресу.
 router.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix='/users',
     tags=['users'],
 )
+
+users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
 
 
 @router.delete(
