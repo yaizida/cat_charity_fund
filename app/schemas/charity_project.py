@@ -1,13 +1,13 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Field, Extra, PositiveInt
 
 
 class CharityProjectBase(BaseModel):
     name: Optional[str] = Field(None, max_length=100)
     description: Optional[str] = Field(None)
-    full_amount: Optional[int] = Field(None)
+    full_amount: Optional[PositiveInt] = Field(None)
 
     class Config:
         extra = Extra.forbid
@@ -16,7 +16,7 @@ class CharityProjectBase(BaseModel):
 class CharityProjectCreate(BaseModel):
     name: str = Field(..., max_length=100)
     description: str = Field(...)
-    full_amount: int = Field(...)
+    full_amount: PositiveInt = Field(...)
 
     class Config:
         min_anystr_length = 1

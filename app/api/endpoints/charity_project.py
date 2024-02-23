@@ -87,6 +87,7 @@ async def update_charity_project(
 @router.delete(
     '/{project_id}',
     response_model=CharityProjectDB,
+    dependencies=[Depends(current_superuser)]
 )
 async def delete_charity_project(
     project_id: int,
