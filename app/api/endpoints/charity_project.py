@@ -59,14 +59,12 @@ async def get_all_charity_projects(
 @router.patch(
     '/{project_id}',
     response_model=CharityProjectDB,
-    response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)]
 )
 async def update_charity_project(
     project_id: int,
     obj_in: CharityProjectUpdate,
     session: AsyncSession = Depends(get_async_session),
-    skip_defaults=True
 ):
     """Только для суперюзеров.
     Закрытый проект нельзя редактировать,
