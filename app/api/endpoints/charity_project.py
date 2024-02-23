@@ -8,7 +8,7 @@ from app.api.validators import (check_charity_project_already_invested,
                                 check_charity_project_exists,
                                 check_charity_project_invested_sum,
                                 check_name_duplicate,
-                                check_empty_values)
+                                )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charity_project import charity_project_crud
@@ -73,7 +73,7 @@ async def update_charity_project(
     project = await check_charity_project_exists(
         project_id, session
     )
-    check_empty_values(project)
+
     check_charity_project_closed(project)
     if obj_in.name:
         await check_name_duplicate(obj_in.name, session)

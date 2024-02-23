@@ -56,11 +56,3 @@ def check_charity_project_closed(charity_project: CharityProject):
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Закрытый проект нельзя редактировать!'
         )
-
-
-def check_empty_values(charity_project: CharityProject):
-    if (charity_project.name is None and charity_project.description is None):
-        raise HTTPException(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-            detail='Запрещено назначать пустое имя, описание или цель фонда'
-        )
