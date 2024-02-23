@@ -65,6 +65,7 @@ async def update_charity_project(
     project_id: int,
     obj_in: CharityProjectUpdate,
     session: AsyncSession = Depends(get_async_session),
+    skip_defaults=True
 ):
     """Только для суперюзеров.
     Закрытый проект нельзя редактировать,
