@@ -3,9 +3,9 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud.base import CRUDBase
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
-from app.crud.donation import donation_crud
 from app.models import CharityProject, User
 from app.schemas.donation import DonationBase, DonationCreate, DonationDB
 from app.utils.investing import investing_process
@@ -24,7 +24,7 @@ async def create_donation(
     user: User = Depends(current_user),
 ):
     """Сделать пожертвование."""
-    new_donation = await donation_crud.create(donation, session, user)
+    new_donation = await CRUDBase.create(donation, session, user)
     await investing_process(new_donation, CharityProject, session)
     return new_donation
 
@@ -41,7 +41,7 @@ async def get_all_donations(
     """Только для суперюзеров.
     Получает список всех пожертвований.
     """
-    all_donations = await donation_crud.get_multi(session)
+    all_donations = await CRUDBase.get_multi(session)
     return all_donations
 
 
@@ -55,7 +55,7 @@ async def get_my_reservations(
     user: User = Depends(current_user)
 ):
     """Получить список моих пожертвований."""
-    donations = await donation_crud.get_by_user(
+    donations = await CRUDBase.get_by_user(
         session=session, user=user
     )
     return donations
