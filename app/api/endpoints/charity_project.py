@@ -9,7 +9,7 @@ from app.api.validators import (check_charity_project_already_invested,
                                 check_charity_project_invested_sum,
                                 check_name_duplicate,
                                 )
-from app.crud.base import CRUDBase
+from app.crud.base import charity_project_crud
 from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.models import Donation
@@ -35,10 +35,10 @@ async def create_charity_project(
     Создает благотворительный проект.
     """
     await check_name_duplicate(charity_project.name, session)
-    await CRUDBase.get_project_id_by_name(
+    await charity_project_crud.get_project_id_by_name(
         charity_project.name, session
     )
-    new_project = await CRUDBase.create(charity_project, session)
+    new_project = await charity_project_crud.create(charity_project, session)
     await investing_process(new_project, Donation, session)
     return new_project
 
@@ -52,7 +52,7 @@ async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session),
 ):
     """Получает список всех проектов."""
-    all_projects = await CRUDBase.get_multi(session)
+    all_projects = await charity_project_crud.get_multi(session)
     return all_projects
 
 
@@ -80,7 +80,7 @@ async def update_charity_project(
     if obj_in.full_amount is not None:
         check_charity_project_invested_sum(project, obj_in.full_amount)
 
-    charity_project = await CRUDBase.update(
+    charity_project = await charity_project_crud.update(
         project, obj_in, session
     )
     return charity_project
@@ -104,7 +104,7 @@ async def delete_charity_project(
         project_id, session
     )
     check_charity_project_already_invested(project)
-    charity_project = await CRUDBase.remove(
+    charity_project = await charity_project_crud.remove(
         project, session
     )
     return charity_project

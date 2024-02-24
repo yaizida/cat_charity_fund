@@ -106,3 +106,16 @@ class CRUDBase:
             )
         )
         return donations.scalars().all()
+
+
+standart_methods = ['get', 'get_multi', 'create', 'update', 'remove']
+
+charity_methods = standart_methods + ['get_project_id_by_name', 'get_charity_project_by_id']
+selected_methods_dict_charity = {method_name: getattr(CRUDBase, method_name) for method_name in charity_methods}
+SelectedCharityClass = type('SelectedMethodsClass', (), selected_methods_dict_charity)
+charity_project_crud = SelectedCharityClass(CharityProject)
+
+donation_methods = standart_methods + ['get_by_user']
+selected_methods_dict_donation = {method_name: getattr(CRUDBase, method_name) for method_name in donation_methods}
+SelectedDonationClass = type('SelectedMethodsClass', (), selected_methods_dict_donation)
+donation_crud = SelectedDonationClass(Donation)
