@@ -25,7 +25,7 @@ async def create_donation(
 ):
     """Сделать пожертвование."""
     new_donation = await donation_crud.create(donation, session, user)
-    await investing_process(new_donation, CharityProject, session)
+    investing_process(new_donation, CharityProject, session)
     return new_donation
 
 

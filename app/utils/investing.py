@@ -48,17 +48,10 @@ async def invest_money(
 
 
 async def investing_process(
-    obj_in: Union[CharityProject, Donation],
-    model_add: Union[CharityProject, Donation],
-    session: AsyncSession,
-) -> Union[CharityProject, Donation]:
-    objects_model = await get_not_full_invested_objects(model_add, session)
+    target: Union[CharityProject, Donation],
+    sources: List[Union[CharityProject, Donation]]
+) -> List[Union[CharityProject, Donation]]:
+    for source in sources:
+        target, source = invest_money(target, source)
 
-    for model in objects_model:
-        obj_in, model = await invest_money(obj_in, model)
-        session.add(obj_in)
-        session.add(model)
-
-    await session.commit()
-    await session.refresh(obj_in)
-    return obj_in
+    return sources
