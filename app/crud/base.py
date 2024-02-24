@@ -1,11 +1,10 @@
-from typing import Optional, List
+from typing import Optional
+
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import User, Donation
-from typing import Optional
-from app.models.charity_project import CharityProject
+from app.models.user import User
 
 
 class CRUDBase:
@@ -72,50 +71,3 @@ class CRUDBase:
         await session.delete(db_obj)
         await session.commit()
         return db_obj
-
-    async def get_project_id_by_name(self,
-                                     project_name: str,
-                                     session: AsyncSession,
-                                     ) -> Optional[int]:
-        db_project_id = await session.execute(
-            select(CharityProject.id).where(
-                CharityProject.name == project_name
-            )
-        )
-        db_project_id = db_project_id.scalars().first()
-        return db_project_id
-
-    async def get_charity_project_by_id(self,
-                                        project_id: int,
-                                        session: AsyncSession,
-                                        ) -> Optional[CharityProject]:
-        db_project = await session.execute(
-            select(CharityProject).where(
-                CharityProject.id == project_id
-            )
-        )
-        db_project = db_project.scalars().first()
-        return db_project
-
-    async def get_by_user(
-        self, user: User, session: AsyncSession,
-    ) -> List[Donation]:
-        donations = await session.execute(
-            select(Donation).where(
-                Donation.user_id == user.id
-            )
-        )
-        return donations.scalars().all()
-
-
-standart_methods = ['get', 'get_multi', 'create', 'update', 'remove']
-
-charity_methods = standart_methods + ['get_project_id_by_name', 'get_charity_project_by_id']
-selected_methods_dict_charity = {method_name: getattr(CRUDBase, method_name) for method_name in charity_methods}
-SelectedCharityClass = type('SelectedMethodsClass', (), selected_methods_dict_charity)
-charity_project_crud = SelectedCharityClass(CharityProject)
-
-donation_methods = standart_methods + ['get_by_user']
-selected_methods_dict_donation = {method_name: getattr(CRUDBase, method_name) for method_name in donation_methods}
-SelectedDonationClass = type('SelectedMethodsClass', (), selected_methods_dict_donation)
-donation_crud = SelectedDonationClass(Donation)

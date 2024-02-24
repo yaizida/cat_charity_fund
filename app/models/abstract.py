@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Integer
+from sqlalchemy import Boolean, Column, DateTime, Integer, CheckConstraint
 
 from app.core.db import Base
 
@@ -14,3 +14,9 @@ class Abstract(Base):
     fully_invested = Column(Boolean, default=False)
     create_date = Column(DateTime, default=datetime.now)
     close_date = Column(DateTime)
+
+    __table_args__ = (
+        CheckConstraint('full_amount >= 0', name='check_full_amount_positive'),
+        CheckConstraint('invested_amount >= 0', name='check_invested_amount_positive'),
+        CheckConstraint('invested_amount <= full_amount', name='check_invested_amount_not_exceed_full')
+    )
