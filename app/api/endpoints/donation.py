@@ -9,6 +9,7 @@ from app.core.user import current_superuser, current_user
 from app.models import CharityProject, User
 from app.schemas.donation import DonationBase, DonationCreate, DonationDB
 from app.utils.investing import investing_process
+from app.models.donation import Donation
 
 router = APIRouter()
 
@@ -25,7 +26,7 @@ async def create_donation(
 ):
     """Сделать пожертвование."""
     new_donation = await donation_crud.create(donation, session, user)
-    investing_process(new_donation, CharityProject)
+    await investing_process(new_donation, CharityProject, session)
     return new_donation
 
 
@@ -56,6 +57,6 @@ async def get_my_reservations(
 ):
     """Получить список моих пожертвований."""
     donations = await donation_crud.get_by_user(
-        session=session, user=user
+        db=Donation, session=session, user=user
     )
     return donations
