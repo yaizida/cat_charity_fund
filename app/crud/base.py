@@ -75,39 +75,35 @@ class CRUDBase:
         return db_obj
 
     async def get_project_id_by_name(self,
-                                     db,
                                      project_name: str,
                                      session: AsyncSession,
                                      ) -> Optional[int]:
         db_project_id = await session.execute(
-            select(db.id).where(
-                db.name == project_name
+            select(CharityProject.id).where(
+                CharityProject.name == project_name
             )
         )
         db_project_id = db_project_id.scalars().first()
         return db_project_id
 
     async def get_charity_project_by_id(self,
-                                        db,
                                         project_id: int,
                                         session: AsyncSession,
                                         ) -> Optional[CharityProject]:
         db_project = await session.execute(
-            select(db).where(
-                db.id == project_id
+            select(CharityProject).where(
+                CharityProject.id == project_id
             )
         )
         db_project = db_project.scalars().first()
         return db_project
 
-    async def get_by_user(self,
-                          db,
-                          user: User,
-                          session: AsyncSession,
-                          ) -> List:
+    async def get_by_user(
+        self, user: User, session: AsyncSession,
+    ) -> List[Donation]:
         donations = await session.execute(
-            select(db).where(
-                db.user_id == user.id
+            select(Donation).where(
+                Donation.user_id == user.id
             )
         )
         return donations.scalars().all()
