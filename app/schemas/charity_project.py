@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field, Extra, PositiveInt
 
-from app.constants import DEFAULT_FULLY_INVESTED, DEFAULT_INVESTED_AMOUNT
+DEFAULT_INVESTED_AMOUNT = 0
+DEFAULT_FULLY_INVESTED = False
 
 
 class CharityProjectBase(BaseModel):

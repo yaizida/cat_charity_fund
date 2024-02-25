@@ -32,7 +32,7 @@ async def check_charity_project_exists(
     session: AsyncSession,
 ):
     project = await charity_project_crud.get_charity_project_by_id(
-        CharityProject, project_id, session
+        project_id, session
     )
     if project is None:
         raise HTTPException(
