@@ -109,5 +109,4 @@ class CRUDBase:
         return donations.scalars().all()
 
 
-charity_project_crud = CRUDBase(CharityProject)
 donation_crud = CRUDBase(Donation)
