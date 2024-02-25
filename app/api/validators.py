@@ -3,8 +3,10 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.endpoints.charity_project import charity_project_crud
 from app.models import CharityProject
+from app.crud.base import CRUDBase
+
+charity_project_crud = CRUDBase(CharityProject)
 
 
 async def check_name_duplicate(
