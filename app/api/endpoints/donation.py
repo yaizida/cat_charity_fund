@@ -6,11 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud import donation_crud
 from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
-from app.models import CharityProject, User
+from app.models import CharityProject, User, Donation
 from app.schemas.donation import DonationBase, DonationCreate, DonationDB
 from app.utils.investing import investing_process
+from app.crud.base import CRUDBase
 
 router = APIRouter()
+donation_crud = CRUDBase(Donation)
 
 
 @router.post(
