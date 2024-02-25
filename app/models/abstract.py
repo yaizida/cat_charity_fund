@@ -11,7 +11,6 @@ class Abstract(Base):
     __abstract__ = True
 
     __table_args__ = (
-        CheckConstraint('full_amount >= 0', name='check_full_amount_positive'),
         CheckConstraint('invested_amount >= 0', name='check_invested_amount_positive'),
         CheckConstraint('invested_amount <= full_amount', name='check_invested_amount_not_exceed_full')
     )
