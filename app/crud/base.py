@@ -107,3 +107,6 @@ class CRUDBase:
             )
         )
         return donations.scalars().all()
+
+
+donation_crud = CRUDBase(Donation)
