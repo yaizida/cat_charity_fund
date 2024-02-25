@@ -39,7 +39,7 @@ async def create_charity_project(
         charity_project.name, session
     )
     new_project = await charity_project_crud.create(charity_project, session)
-    investing_process(new_project, Donation)
+    await investing_process(new_project, Donation, session)
     return new_project
 
 

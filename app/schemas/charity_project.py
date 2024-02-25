@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field, Extra, PositiveInt
+from pydantic import BaseModel, Field, Extra, PositiveInt, conint
 
 DEFAULT_INVESTED_AMOUNT = 0
 DEFAULT_FULLY_INVESTED = False
@@ -17,9 +17,9 @@ class CharityProjectBase(BaseModel):
 
 
 class CharityProjectCreate(BaseModel):
-    name: str = Field(..., max_length=100)
-    description: str = Field(...)
-    full_amount: PositiveInt = Field(...)
+    name: str = Field(max_length=100)
+    description: str
+    full_amount: PositiveInt
 
     class Config:
         min_anystr_length = 1
