@@ -9,17 +9,16 @@ from app.api.validators import (check_charity_project_already_invested,
                                 check_charity_project_invested_sum,
                                 check_name_duplicate,
                                 )
+from app.crud import charity_project_crud
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.models import Donation, CharityProject
+from app.models import Donation
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
 from app.utils.investing import investing_process
-from app.crud.base import CRUDBase
 
 router = APIRouter()
-charity_project_crud = CRUDBase(CharityProject)
 
 
 @router.post(
