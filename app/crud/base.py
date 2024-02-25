@@ -87,12 +87,13 @@ class CRUDBase:
         return db_project_id
 
     async def get_charity_project_by_id(self,
+                                        db,
                                         project_id: int,
                                         session: AsyncSession,
-                                        ) -> Optional[CharityProject]:
+                                        ):
         db_project = await session.execute(
-            select(CharityProject).where(
-                CharityProject.id == project_id
+            select(db).where(
+                db.id == project_id
             )
         )
         db_project = db_project.scalars().first()
