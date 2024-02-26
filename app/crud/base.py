@@ -99,12 +99,14 @@ class CRUDBase:
         db_project = db_project.scalars().first()
         return db_project
 
-    async def get_by_user(
-        self, user: User, session: AsyncSession,
-    ) -> List[Donation]:
+    async def get_by_user(self,
+                          db,
+                          user: User,
+                          session: AsyncSession,
+                          ) -> List:
         donations = await session.execute(
-            select(Donation).where(
-                Donation.user_id == user.id
+            select(db).where(
+                db.user_id == user.id
             )
         )
         return donations.scalars().all()
