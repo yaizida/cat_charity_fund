@@ -9,7 +9,6 @@ from app.utils.constans import DEFAULT_INVESTED_AMOUNT
 class Abstract(Base):
 
     __abstract__ = True
-
     __table_args__ = (
         CheckConstraint('invested_amount >= 0', name='check_invested_amount_positive'),
         CheckConstraint('invested_amount <= full_amount', name='check_invested_amount_not_exceed_full')

@@ -15,7 +15,7 @@ from app.models import Donation, CharityProject
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
-from app.utils.investing import investing_process
+from app.utils.investing import new_investing_process
 from app.crud.base import CRUDBase
 
 router = APIRouter()
@@ -40,7 +40,7 @@ async def create_charity_project(
         charity_project.name, session
     )
     new_project = await charity_project_crud.create(charity_project, session)
-    await investing_process(new_project, Donation, session)
+    new_investing_process(new_project, Donation, list(new_project, Donation))
     return new_project
 
 

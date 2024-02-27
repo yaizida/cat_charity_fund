@@ -62,3 +62,32 @@ async def investing_process(
     await session.commit()
     await session.refresh(obj_in)
     return obj_in
+
+
+def new_invest_money(obj_in: Union[CharityProject, Donation],
+                     obj_model: Union[CharityProject, Donation]
+                     ) -> Union[CharityProject, Donation]:
+    free_amount_in = obj_in.full_amount - obj_in.invested_amount
+    free_amount_in_model = obj_model.full_amount - obj_model.invested_amount
+
+    if free_amount_in > free_amount_in_model:
+        obj_in.invested_amount += free_amount_in_model
+    elif free_amount_in == free_amount_in_model:
+        obj_model.invested_amount += free_amount_in_model
+        obj_model.invested_amount = obj_model.full_amount
+        obj_model.fully_invested = True
+        obj_model.close_date = datetime.now()
+    else:
+        obj_model.invested_amount += free_amount_in
+
+    return obj_in, obj_model
+
+
+def new_investing_process(obj_in: Union[CharityProject, Donation],
+                          target: Union[CharityProject, Donation],
+                          sources: List[Union[CharityProject, Donation]]
+                          ) -> Union[CharityProject, Donation]:
+    for source in sources:
+        obj_in, target = new_invest_money(obj_in, target)
+
+    return obj_in
