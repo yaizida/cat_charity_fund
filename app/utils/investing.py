@@ -64,6 +64,13 @@ async def investing_process(
     return obj_in
 
 
+def new_close_donation_for_obj(obj_in: Union[CharityProject, Donation]):
+    obj_in.invested_amount = obj_in.full_amount
+    obj_in.fully_invested = True
+    obj_in.close_date = datetime.now()
+    return obj_in
+
+
 def new_invest_money(obj_in: Union[CharityProject, Donation],
                      obj_model: Union[CharityProject, Donation]
                      ) -> Union[CharityProject, Donation]:
@@ -72,15 +79,15 @@ def new_invest_money(obj_in: Union[CharityProject, Donation],
 
     if free_amount_in > free_amount_in_model:
         obj_in.invested_amount += free_amount_in_model
+        new_close_donation_for_obj(obj_model)
+
     elif free_amount_in == free_amount_in_model:
-        obj_model.invested_amount += free_amount_in_model
-        obj_model.invested_amount = obj_model.full_amount
-        obj_model.fully_invested = True
-        obj_model.close_date = datetime.now()
+        new_close_donation_for_obj(obj_in)
+        new_close_donation_for_obj(obj_model)
+
     else:
         obj_model.invested_amount += free_amount_in
-
-    return obj_in, obj_model
+        new_close_donation_for_obj(obj_in)
 
 
 def new_investing_process(obj_in: Union[CharityProject, Donation],
