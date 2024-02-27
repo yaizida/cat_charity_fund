@@ -11,7 +11,7 @@ from app.api.validators import (check_charity_project_already_invested,
                                 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.models import Donation, CharityProject
+from app.models import CharityProject
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
