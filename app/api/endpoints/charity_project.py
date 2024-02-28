@@ -30,17 +30,25 @@ charity_project_crud = CRUDBase(CharityProject)
 )
 async def create_charity_project(
     charity_project: CharityProjectCreate,
-    session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров.
-    Создает благотворительный проект.
-    """
-    await check_name_duplicate(charity_project.name, session)
-    await charity_project_crud.get_project_id_by_name(
-        charity_project.name, session
-    )
-    new_project = await charity_project_crud.create(charity_project, session)
-    new_investing_process(new_project, None, [])
+    """Только для суперюзеров. Создает благотворительный проект."""
+
+    # Проверка на дублирование имени благотворительного проекта
+    check_name_duplicate(charity_project.name)
+
+    # Получение проекта по имени
+    existing_project = charity_project_crud.get_project_by_name(charity_project.name)
+
+    if existing_project is not None:
+        # Если проект с таким именем уже существует, возвращаем его
+        return existing_project
+
+    # Создание нового благотворительного проекта
+    new_project = charity_project_crud.create(charity_project)
+
+    # Вызов функции investing_process без передачи сессии
+    new_project = new_investing_process(new_project, None, [])
+
     return new_project
 
 

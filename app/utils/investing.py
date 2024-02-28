@@ -64,7 +64,15 @@ async def investing_process(
     return obj_in
 
 
-def new_close_donation_for_obj(obj_in: Union[CharityProject, Donation]):
+def new_get_not_full_invested_objects(obj_in: Union[CharityProject, Donation]
+                                      ) -> List[Union[CharityProject, Donation]]:
+
+    objects_model = [obj for obj in [obj_in] if obj.fully_invested == 0]
+    return objects_model
+
+
+def new_close_donation_for_obj(obj_in: Union[CharityProject, Donation]
+                               ) -> Union[CharityProject, Donation]:
     obj_in.invested_amount = obj_in.full_amount
     obj_in.fully_invested = True
     obj_in.close_date = datetime.now()
@@ -79,25 +87,13 @@ def new_invest_money(obj_in: Union[CharityProject, Donation],
 
     if free_amount_in > free_amount_in_model:
         obj_in.invested_amount += free_amount_in_model
-        new_close_donation_for_obj(obj_model)
-
+        obj_model = new_close_donation_for_obj(obj_model)
     elif free_amount_in == free_amount_in_model:
-        new_close_donation_for_obj(obj_in)
-        new_close_donation_for_obj(obj_model)
-
+        obj_model = new_close_donation_for_obj(obj_model)
+        obj_in = new_close_donation_for_obj(obj_in)
     else:
         obj_model.invested_amount += free_amount_in
-        new_close_donation_for_obj(obj_in)
-
-    if free_amount_in > free_amount_in_model:
-        obj_in.invested_amount += free_amount_in_model
-    elif free_amount_in == free_amount_in_model:
-        obj_model.invested_amount += free_amount_in_model
-        obj_model.invested_amount = obj_model.full_amount
-        obj_model.fully_invested = True
-        obj_model.close_date = datetime.now()
-    else:
-        obj_model.invested_amount += free_amount_in
+        obj_in = new_close_donation_for_obj(obj_in)
 
     return obj_in, obj_model
 
@@ -106,7 +102,8 @@ def new_investing_process(obj_in: Union[CharityProject, Donation],
                           target: Union[CharityProject, Donation],
                           sources: List[Union[CharityProject, Donation]]
                           ) -> Union[CharityProject, Donation]:
-    for source in sources:
-        obj_in, target = new_invest_money(obj_in, target)
+    objects_model = new_get_not_full_invested_objects(target)
+    for source in objects_model:
+        obj_in, target = new_invest_money(obj_in, source)
 
     return obj_in
