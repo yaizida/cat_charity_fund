@@ -26,15 +26,16 @@ charity_project_crud = CRUDBase(CharityProject)
     '/',
     response_model=CharityProjectDB,
     response_model_exclude_none=True,
-    dependencies=[Depends(current_superuser)]
+    dependencies=[Depends(current_superuser)],
 )
 async def create_charity_project(
     charity_project: CharityProjectCreate,
+    session: AsyncSession = Depends(get_async_session),
 ):
     """Только для суперюзеров. Создает благотворительный проект."""
 
     # Проверка на дублирование имени благотворительного проекта
-    check_name_duplicate(charity_project.name)
+    await check_name_duplicate(charity_project.name, session)
 
     # Получение проекта по имени
     existing_project = charity_project_crud.get_project_by_name(charity_project.name)
