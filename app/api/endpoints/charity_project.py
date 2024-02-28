@@ -11,11 +11,11 @@ from app.api.validators import (check_charity_project_already_invested,
                                 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.models import CharityProject
+from app.models import Donation, CharityProject
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
-from app.utils.investing import new_investing_process
+from app.utils.investing import investing_process
 from app.crud.base import CRUDBase
 
 router = APIRouter()
@@ -26,30 +26,21 @@ charity_project_crud = CRUDBase(CharityProject)
     '/',
     response_model=CharityProjectDB,
     response_model_exclude_none=True,
-    dependencies=[Depends(current_superuser)],
+    dependencies=[Depends(current_superuser)]
 )
 async def create_charity_project(
     charity_project: CharityProjectCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров. Создает благотворительный проект."""
-
-    # Проверка на дублирование имени благотворительного проекта
+    """Только для суперюзеров.
+    Создает благотворительный проект.
+    """
     await check_name_duplicate(charity_project.name, session)
-
-    # Получение проекта по имени
-    existing_project = charity_project_crud.get_project_id_by_name(charity_project.name, session)
-
-    if existing_project is not None:
-        # Если проект с таким именем уже существует, возвращаем его
-        return existing_project
-
-    # Создание нового благотворительного проекта
-    new_project = charity_project_crud.create(charity_project)
-
-    # Вызов функции investing_process без передачи сессии
-    new_project = new_investing_process(new_project, None, [])
-
+    await charity_project_crud.get_project_id_by_name(
+        charity_project.name, session
+    )
+    new_project = await charity_project_crud.create(charity_project, session)
+    await investing_process(new_project, Donation, session)
     return new_project
 
 
