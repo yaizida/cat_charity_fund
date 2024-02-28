@@ -38,7 +38,7 @@ async def create_charity_project(
     await check_name_duplicate(charity_project.name, session)
 
     # Получение проекта по имени
-    existing_project = charity_project_crud.get_project_by_name(charity_project.name)
+    existing_project = charity_project_crud.get_project_id_by_name(charity_project.name, session)
 
     if existing_project is not None:
         # Если проект с таким именем уже существует, возвращаем его
