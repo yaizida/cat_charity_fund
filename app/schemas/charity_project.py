@@ -2,26 +2,27 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field, Extra, PositiveInt
 
-from app.utils.constans import DEFAULT_FULLY_INVESTED, DEFAULT_INVESTED_AMOUNT
+from app.utils.constans import (DEFAULT_FULLY_INVESTED, DEFAULT_INVESTED_AMOUNT,
+                                MAX_LEN_STRING, MIN_ANYSTR_LENGTH)
 
 
 class CharityProjectBase(BaseModel):
-    name: Optional[str] = Field(None, max_length=100)
+    name: Optional[str] = Field(None, max_length=MAX_LEN_STRING)
     description: Optional[str] = Field(None)
     full_amount: Optional[PositiveInt] = Field(None)
 
     class Config:
         extra = Extra.forbid
-        min_anystr_length = 1
+        min_anystr_length = MIN_ANYSTR_LENGTH
 
 
 class CharityProjectCreate(BaseModel):
-    name: str = Field(max_length=100)
+    name: str = Field(max_length=MAX_LEN_STRING)
     description: str
     full_amount: PositiveInt
 
     class Config:
-        min_anystr_length = 1
+        min_anystr_length = MIN_ANYSTR_LENGTH
 
 
 class CharityProjectDB(CharityProjectCreate):

@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
-from app.models.charity_project import CharityProject
 
 
 class CRUDBase:
@@ -74,12 +73,13 @@ class CRUDBase:
         return db_obj
 
     async def get_project_id_by_name(self,
+                                     db,
                                      project_name: str,
                                      session: AsyncSession,
                                      ) -> Optional[int]:
         db_project_id = await session.execute(
-            select(CharityProject.id).where(
-                CharityProject.name == project_name
+            select(db.id).where(
+                db.name == project_name
             )
         )
         db_project_id = db_project_id.scalars().first()
