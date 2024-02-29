@@ -11,7 +11,7 @@ from app.api.validators import (check_charity_project_already_invested,
                                 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.models import CharityProject
+from app.models import CharityProject, Donation
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
@@ -29,26 +29,34 @@ charity_project_crud = CRUDBase(CharityProject)
     response_model_exclude_none=True,
     dependencies=[Depends(current_superuser)]
 )
+@router.post(
+    '/',
+    response_model=CharityProjectDB,
+    response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)]
+)
 async def create_charity_project(
     charity_project: CharityProjectCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    """Только для суперюзеров.
-    Создает благотворительный проект.
-    """
-    await check_name_duplicate(charity_project.name, session)
-    await charity_project_crud.get_project_id_by_name(
-        CharityProject, charity_project.name, session
-    )
-    new_project = await charity_project_crud.create(charity_project, session)
+    """Только для суперюзеров. Создает благотворительный проект."""
 
-    objects_model = await get_not_full_invested_objects(new_project, session)
-    source = new_investing_process(new_project, objects_model)
-    session.add(source)
-    # session.add(model)
+    async with session() as async_session:
+        await check_name_duplicate(charity_project.name, async_session)
+        await charity_project_crud.get_project_id_by_name(
+            CharityProject, charity_project.name, async_session)
 
-    await session.commit()
-    await session.refresh(source)
+        new_project = await charity_project_crud.create(
+            charity_project, async_session)
+
+        target_objects = await get_not_full_invested_objects(
+            Donation, async_session)
+        new_project = new_investing_process(
+            new_project, target_objects)
+
+        await async_session.commit()
+        await async_session.refresh(new_project)
+
     return new_project
 
 
