@@ -15,7 +15,7 @@ from app.models import Donation, CharityProject
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
-from app.utils.investing import investing_process
+from app.utils.investing import investing_process, get_not_full_invested_objects
 from app.crud.base import CRUDBase
 
 
@@ -41,7 +41,14 @@ async def create_charity_project(
         CharityProject, charity_project.name, session
     )
     new_project = await charity_project_crud.create(charity_project, session)
-    await investing_process(new_project, Donation, session)
+
+    objects_model = await get_not_full_invested_objects(new_project, session)
+    source = investing_process(new_project, objects_model)
+    session.add(source)
+    # session.add(model)
+
+    await session.commit()
+    await session.refresh(source)
     return new_project
 
 
