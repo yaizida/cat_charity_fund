@@ -47,27 +47,6 @@ def invest_money(
     return source, obj_model
 
 
-async def investing_process(
-    source: Union[CharityProject, Donation],
-    target: Union[CharityProject, Donation],
-    session: AsyncSession,
-) -> Union[CharityProject, Donation]:
-    # Сессией я не её обделить т.к здесь она требуеться(
-    # Мне кажеться я всё равно что то не понял
-    # Не совсем понятно как быть с добовлением\обновлением\фиксированием в бд
-    objects_model = await get_not_full_invested_objects(target, session)
-    for model in objects_model:
-        source, model = invest_money(source, model)
-        session.add(source)
-        session.add(model)
-
-    # Вот в данном моменте не сосвес понятно как без сессии,
-    # Как мне тогда обойтись без неё ?
-    await session.commit()
-    await session.refresh(source)
-    return source
-
-
 def new_investing_process(
     source: Union[CharityProject, Donation],
     target: Union[CharityProject, Donation],
