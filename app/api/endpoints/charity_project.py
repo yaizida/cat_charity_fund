@@ -11,11 +11,11 @@ from app.api.validators import (check_charity_project_already_invested,
                                 )
 from app.core.db import get_async_session
 from app.core.user import current_superuser
-from app.models import Donation, CharityProject
+from app.models import CharityProject
 from app.schemas.charity_project import (CharityProjectCreate,
                                          CharityProjectDB,
                                          CharityProjectUpdate)
-from app.utils.investing import investing_process, get_not_full_invested_objects
+from app.utils.investing import new_investing_process, get_not_full_invested_objects
 from app.crud.base import CRUDBase
 
 
@@ -43,7 +43,7 @@ async def create_charity_project(
     new_project = await charity_project_crud.create(charity_project, session)
 
     objects_model = await get_not_full_invested_objects(new_project, session)
-    source = investing_process(new_project, objects_model)
+    source = new_investing_process(new_project, objects_model)
     session.add(source)
     # session.add(model)
 
