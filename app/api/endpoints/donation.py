@@ -7,7 +7,7 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser, current_user
 from app.models import CharityProject, User, Donation
 from app.schemas.donation import DonationBase, DonationCreate, DonationDB
-from app.utils.investing import investing_process
+from app.utils.investing import new_investing_process, get_not_full_invested_objects
 from app.crud.base import CRUDBase
 
 router = APIRouter()
@@ -26,7 +26,13 @@ async def create_donation(
 ):
     """Сделать пожертвование."""
     new_donation = await donation_crud.create(donation, session, user)
-    await investing_process(new_donation, CharityProject, session)
+    target_objects = await get_not_full_invested_objects(
+        CharityProject, session)
+    new_project = new_investing_process(
+        new_donation, target_objects)
+
+    await session.commit()
+    await session.refresh(new_project)
     return new_donation
 
 
